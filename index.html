@@ -1089,19 +1089,25 @@ body.motion-off [data-reveal] { opacity: 1; transform: none; transition: none; }
         </div>
       </a>
 
-      <a class="app-row" href="#" onclick="return false" style="opacity:.55">
+      <a class="app-row" href="#" onclick="return false">
         <span class="app-num">04</span>
-        <div class="app-icon" style="background:var(--bg-card); display:flex; align-items:center; justify-content:center; color:var(--fg-dim); font-family:var(--font-mono); font-size:28px;">
-          ?
+        <div class="app-icon">
+          <img src="assets/ai-plant-icon.png" alt="AI Plant">
+          <span class="shine"></span>
         </div>
         <div class="app-body">
-          <div class="app-name" data-i18n="apps.next.name">下一个作品</div>
-          <div class="app-desc" data-i18n="apps.next.desc">正在孕育中 · 专注于让 AI 真正帮助创造者。</div>
+          <div class="app-name">Bonsai</div>
+          <div class="app-desc" data-i18n="apps.bonsai.desc">盆景养护数字伴侣。GPS 定位气候区智能养护提醒，成长时间线照片对比，树种知识库，东方美学设计。</div>
           <div class="app-tags">
+            <span class="app-tag" data-i18n="apps.bonsai.tag1">生活</span>
+            <span class="app-tag" data-i18n="apps.bonsai.tag2">盆景</span>
+            <span class="app-tag" data-i18n="apps.bonsai.tag3">养护</span>
+            <span class="app-tag" data-i18n="apps.bonsai.tag4">知识</span>
           </div>
         </div>
         <div class="app-meta">
-          <span class="app-status" data-i18n="apps.next.status">WIP</span>
+          <span class="app-status" data-i18n="apps.bonsai.status">即将上线</span>
+          <span class="app-arrow">→</span>
         </div>
       </a>
     </div>
@@ -1469,7 +1475,9 @@ const I18N = {
     "apps.kids.desc":"儿童积分奖励系统。家长设定任务模板，孩子完成任务赚积分，支持专注计时、周循环、积分兑换，多孩子独立管理。",
     "apps.kids.status":"已上架",
     "apps.kids.tag1":"育儿","apps.kids.tag2":"积分","apps.kids.tag3":"习惯","apps.kids.tag4":"计时",
-    "apps.next.name":"下一个作品","apps.next.desc":"正在孕育中 · 专注于让 AI 真正帮助创造者。","apps.next.status":"进行中","apps.next.tag1":"进行中",
+    "apps.bonsai.desc":"盆景养护数字伴侣。GPS 定位气候区智能养护提醒，成长时间线照片对比，树种知识库，东方美学设计。",
+    "apps.bonsai.status":"即将上线",
+    "apps.bonsai.tag1":"生活","apps.bonsai.tag2":"盆景","apps.bonsai.tag3":"养护","apps.bonsai.tag4":"知识",
     "about.num":"02 — 关于","about.title":"一个设计师，<br>在写代码。","about.sub":"从交互设计、体验设计、产品经理，到全栈开发 — 十年的路，都在同一个方向上。",
     "about.intro.label":"你好","about.intro.h":"我相信好产品是<br>人文 × 技术的交集。","about.intro.p1":"从交互设计师起步，一路经过体验设计、产品定义、产品经理，到现在自己动手做前后端。每一步都在更靠近用户真实的问题。","about.intro.p2":"在 AI 时代，我想成为一个能把想法完整落地的设计实践者 — 用代码写出的诗。",
     "about.now.label":"正在","about.now.h":"打磨下一个应用的原型。","about.now.p":"2026 年",
@@ -1508,7 +1516,9 @@ const I18N = {
     "apps.kids.desc":"Kids reward system. Parents set task templates, kids earn points for completing tasks. Focus timer, weekly cycles, point redemption, multi-child support.",
     "apps.kids.status":"LIVE",
     "apps.kids.tag1":"Parenting","apps.kids.tag2":"Points","apps.kids.tag3":"Habits","apps.kids.tag4":"Timer",
-    "apps.next.name":"Next thing","apps.next.desc":"In the oven · making AI actually useful for creators.","apps.next.status":"WIP","apps.next.tag1":"In Progress",
+    "apps.bonsai.desc":"Bonsai care companion. GPS climate zone smart reminders, growth timeline photo compare, species knowledge base, Eastern aesthetic design.",
+    "apps.bonsai.status":"Coming Soon",
+    "apps.bonsai.tag1":"Lifestyle","apps.bonsai.tag2":"Bonsai","apps.bonsai.tag3":"Care","apps.bonsai.tag4":"Knowledge",
     "about.num":"02 — ABOUT","about.title":"A designer<br>who codes.","about.sub":"From IxD, UX, PM — all the way to full-stack. A decade, one direction.",
     "about.intro.label":"HELLO","about.intro.h":"Good products live where<br>humanity meets craft.","about.intro.p1":"Started as an interaction designer. Moved through UX, product definition, PM, and now I build my own front-end + back-end. Every step got me closer to real user problems.","about.intro.p2":"In the age of AI, I want to be a design practitioner who ships — writing poetry in code.",
     "about.now.label":"NOW","about.now.h":"Prototyping the next app.","about.now.p":"2026",
