@@ -255,7 +255,7 @@ HTMLHEAD2
     .bar-group .cnt{min-width:50px;text-align:right;font-weight:600}
     </style>' >> "$OUTFILE"
 
-    echo "<h2>App Store 点击</h2>" >> "$OUTFILE"
+    echo "<h2>App Store 每日点击</h2>" >> "$OUTFILE"
     echo "<div class=\"summary\">" >> "$OUTFILE"
     echo "<div class=\"summary-item\"><div class=\"val\">$APP_TOTAL</div><div class=\"lbl\">月总点击</div></div>" >> "$OUTFILE"
     echo "<div class=\"summary-item\"><div class=\"val\">$APP_AVG</div><div class=\"lbl\">日均点击</div></div>" >> "$OUTFILE"
@@ -270,7 +270,6 @@ HTMLHEAD2
     echo '</div>' >> "$OUTFILE"
 
     # 每日彩色分段条
-    echo '<h2>每日点击</h2>' >> "$OUTFILE"
     for d in $(awk '{print $1}' /tmp/stats_app_agg.tmp | sort -u); do
       dt="${d:0:4}-${d:4:2}-${d:6:2}"
       day_total=$(grep -c "^$d " /tmp/stats_app_agg.tmp)
