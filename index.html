@@ -1023,7 +1023,7 @@ body.motion-off [data-reveal] { opacity: 1; transform: none; transition: none; }
     </div>
     <div class="apps-list" data-reveal>
 
-      <a class="app-row" href="/go/ai-recorder" target="_blank">
+      <a class="app-row app-store-link" data-track="ai-recorder" href="https://apps.apple.com/cn/app/ai-recorder/id6760441600" target="_blank">
         <span class="app-num">01</span>
         <div class="app-icon">
           <img src="assets/ai-recorder-icon.jpg" alt="AI Recorder">
@@ -1045,7 +1045,7 @@ body.motion-off [data-reveal] { opacity: 1; transform: none; transition: none; }
         </div>
       </a>
 
-      <a class="app-row" href="/go/eye-gym" target="_blank">
+      <a class="app-row app-store-link" data-track="eye-gym" href="https://apps.apple.com/cn/app/eye-gym/id6760632778" target="_blank">
         <span class="app-num">02</span>
         <div class="app-icon">
           <img src="assets/eye-gym-icon.png" alt="Eye Gym">
@@ -1067,7 +1067,7 @@ body.motion-off [data-reveal] { opacity: 1; transform: none; transition: none; }
         </div>
       </a>
 
-      <a class="app-row" href="/go/kids-points" target="_blank">
+      <a class="app-row app-store-link" data-track="kids-points" href="https://apps.apple.com/cn/app/kids-points/id6775178148" target="_blank">
         <span class="app-num">03</span>
         <div class="app-icon">
           <img src="assets/kids-points-icon.png" alt="Kids Points">
@@ -1089,7 +1089,7 @@ body.motion-off [data-reveal] { opacity: 1; transform: none; transition: none; }
         </div>
       </a>
 
-      <a class="app-row" href="/go/bonsai" target="_blank">
+      <a class="app-row app-store-link" data-track="bonsai" href="https://apps.apple.com/cn/app/bonsai/id6778829915" target="_blank">
         <span class="app-num">04</span>
         <div class="app-icon">
           <img src="assets/ai-plant-icon.png" alt="Bonsai">
@@ -1695,6 +1695,16 @@ function init() {
   const nav = document.getElementById('nav');
   window.addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 8);
+  });
+
+  // App Store click tracking — sendBeacon 不阻塞 Universal Links
+  document.querySelectorAll('.app-store-link').forEach(link => {
+    link.addEventListener('click', function() {
+      const name = this.getAttribute('data-track');
+      if (name) {
+        navigator.sendBeacon('/a/' + name);
+      }
+    });
   });
 
   // Easter egg: click logo 5x OR konami
