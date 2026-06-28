@@ -47,7 +47,7 @@ BEGIN {
   mon[\"May\"]=\"05\"; mon[\"Jun\"]=\"06\"; mon[\"Jul\"]=\"07\"; mon[\"Aug\"]=\"08\"
   mon[\"Sep\"]=\"09\"; mon[\"Oct\"]=\"10\"; mon[\"Nov\"]=\"11\"; mon[\"Dec\"]=\"12\"
 }
-\$7 ~ /^\/a\// {
+index(\$7, \"/a/\") == 1 && \$7 != \"/a/test\" {
   match(\$0, /\[([0-9]{2})\/([A-Z][a-z]{2})\/([0-9]{4})/, a)
   if (a[1] != \"\") {
     day = a[3] mon[a[2]] a[1]
@@ -69,7 +69,7 @@ BEGIN {
   mon[\"May\"]=\"05\"; mon[\"Jun\"]=\"06\"; mon[\"Jul\"]=\"07\"; mon[\"Aug\"]=\"08\"
   mon[\"Sep\"]=\"09\"; mon[\"Oct\"]=\"10\"; mon[\"Nov\"]=\"11\"; mon[\"Dec\"]=\"12\"
 }
-\$7 ~ /^\/a\// {
+index(\$7, \"/a/\") == 1 && \$7 != \"/a/test\" {
   match(\$0, /\[([0-9]{2})\/([A-Z][a-z]{2})\/([0-9]{4})/, a)
   if (a[1] != \"\") {
     day = a[3] mon[a[2]] a[1]
@@ -85,7 +85,7 @@ BEGIN {
   mon[\"May\"]=\"05\"; mon[\"Jun\"]=\"06\"; mon[\"Jul\"]=\"07\"; mon[\"Aug\"]=\"08\"
   mon[\"Sep\"]=\"09\"; mon[\"Oct\"]=\"10\"; mon[\"Nov\"]=\"11\"; mon[\"Dec\"]=\"12\"
 }
-\$7 ~ /^\/a\// {
+index(\$7, \"/a/\") == 1 && \$7 != \"/a/test\" {
   match(\$0, /\[([0-9]{2})\/([A-Z][a-z]{2})\/([0-9]{4})/, a)
   if (a[1] != \"\") {
     day = a[3] mon[a[2]] a[1]
@@ -257,7 +257,7 @@ HTMLHEAD2
       test "${d:0:6}" != "$MONTH_PREFIX" && continue
       echo "$name" >> /tmp/stats_app_names.tmp
     done < /tmp/stats_app_detail.tmp
-    sort /tmp/stats_app_names.tmp | uniq -c | sort -rn | while read cnt name; do
+    sort /tmp/stats_app_names.tmp | grep -v '^test$' | uniq -c | sort -rn | while read cnt name; do
       bar_w=$(( cnt * 400 / APP_MAX ))
       label="$name"
       case "$name" in
