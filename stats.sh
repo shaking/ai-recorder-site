@@ -252,7 +252,7 @@ HTMLHEAD2
     .bar-group{margin:4px 0;display:flex;align-items:center;gap:2px;font-size:14px}
     .bar-group .label{min-width:90px;font-family:monospace}
     .bar-group .seg{height:20px;min-width:24px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600;border-radius:4px}
-    .bar-group .cnt{min-width:50px;text-align:right;font-weight:600}
+    .bar-group .cnt{margin-left:4px;text-align:left;font-weight:600}
     </style>' >> "$OUTFILE"
 
     echo "<h2>App Store 每日点击</h2>" >> "$OUTFILE"
