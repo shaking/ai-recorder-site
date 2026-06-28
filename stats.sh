@@ -110,7 +110,7 @@ cat > "$OUT" << 'HTMLHEAD'
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>浮空岛 · 访问统计</title>
 <style>
-body{font-family:-apple-system,sans-serif;max-width:800px;margin:60px auto;padding:0 20px;color:#111;background:#F8F5EC}
+body{font-family:-apple-system,sans-serif;max-width:800px;margin:60px auto;padding:0 20px;color:#111;background:#fff}
 h1{font-size:24px;margin-bottom:4px}
 h2{font-size:15px;margin:32px 0 12px;color:#111}
 .months{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
@@ -155,7 +155,7 @@ generate_month_page() {
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>浮空岛 · ${YM} 访问统计</title>
 <style>
-body{font-family:-apple-system,sans-serif;max-width:800px;margin:60px auto;padding:0 20px;color:#111;background:#F8F5EC}
+body{font-family:-apple-system,sans-serif;max-width:800px;margin:60px auto;padding:0 20px;color:#111;background:#fff}
 h1{font-size:24px;margin-bottom:4px}
 h2{font-size:15px;margin:32px 0 12px;color:#111}
 .months{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
