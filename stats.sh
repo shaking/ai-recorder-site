@@ -251,7 +251,7 @@ HTMLHEAD2
     .legend .dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
     .bar-group{margin:6px 0;display:flex;align-items:center;gap:10px;font-size:14px}
     .bar-group .label{min-width:90px;font-family:monospace}
-    .bar-group .seg{height:20px;min-width:2px}
+    .bar-group .seg{height:20px;min-width:24px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600}
     .bar-group .cnt{min-width:50px;text-align:right;font-weight:600}
     </style>' >> "$OUTFILE"
 
@@ -280,7 +280,7 @@ HTMLHEAD2
         if [ "$app_cnt" -gt 0 ]; then
           seg_w=$(( app_cnt * 400 / (APP_MAX > 0 ? APP_MAX : 1) ))
           test "$seg_w" -lt 3 && seg_w=3
-          echo "<div class=\"seg app-${name}\" style=\"width:${seg_w}px\" title=\"$name: $app_cnt\"></div>" >> "$OUTFILE"
+          echo "<div class=\"seg app-${name}\" style=\"width:${seg_w}px\">$app_cnt</div>" >> "$OUTFILE"
         fi
       done
       echo "<span class=\"cnt\">$day_total</span></div>" >> "$OUTFILE"
