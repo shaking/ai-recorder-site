@@ -251,7 +251,7 @@ HTMLHEAD2
     .legend .dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
     .bar-group{margin:6px 0;display:flex;align-items:center;gap:10px;font-size:14px}
     .bar-group .label{min-width:90px;font-family:monospace}
-    .bar-group .seg{height:20px;min-width:24px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600}
+    .bar-group .seg{height:20px;min-width:24px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600;border-radius:4px}
     .bar-group .cnt{min-width:50px;text-align:right;font-weight:600}
     </style>' >> "$OUTFILE"
 
