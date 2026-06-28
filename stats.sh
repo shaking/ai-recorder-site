@@ -35,9 +35,10 @@ END { for (d in cnt) print d, cnt[d] }
 
 sudo chmod 644 /tmp/stats_daily.tmp
 
-# ---- App Store 点击统计（按日） ----
+# ---- App Store 点击统计（按日总计 + 按日按app） ----
 sudo sh -c "
 > /tmp/stats_app.tmp
+> /tmp/stats_app_detail.tmp
 for f in /var/log/nginx/access.log*; do
   zcat -f \"\$f\" 2>/dev/null
 done | awk '
@@ -51,12 +52,51 @@ BEGIN {
   if (a[1] != \"\") {
     day = a[3] mon[a[2]] a[1]
     cnt[day]++
+    # 提取 app 名: /go/ai-recorder -> ai-recorder
+    split(\$7, p, \"/\")
+    app[day][p[3]]++
   }
 }
-END { for (d in cnt) print d, cnt[d] }
+END {
+  for (d in cnt) print d, cnt[d]
+}
 ' | sort > /tmp/stats_app.tmp
+
+# 按 app 明细
+awk '
+BEGIN {
+  mon[\"Jan\"]=\"01\"; mon[\"Feb\"]=\"02\"; mon[\"Mar\"]=\"03\"; mon[\"Apr\"]=\"04\"
+  mon[\"May\"]=\"05\"; mon[\"Jun\"]=\"06\"; mon[\"Jul\"]=\"07\"; mon[\"Aug\"]=\"08\"
+  mon[\"Sep\"]=\"09\"; mon[\"Oct\"]=\"10\"; mon[\"Nov\"]=\"11\"; mon[\"Dec\"]=\"12\"
+}
+\$7 ~ /^\/go\// {
+  match(\$0, /\[([0-9]{2})\/([A-Z][a-z]{2})\/([0-9]{4})/, a)
+  if (a[1] != \"\") {
+    day = a[3] mon[a[2]] a[1]
+    split(\$7, p, \"/\")
+    print day, p[3]
+  }
+}
+' < /dev/null > /tmp/stats_app_detail.tmp
+for f in /var/log/nginx/access.log*; do
+  zcat -f \"\$f\" 2>/dev/null | awk '
+BEGIN {
+  mon[\"Jan\"]=\"01\"; mon[\"Feb\"]=\"02\"; mon[\"Mar\"]=\"03\"; mon[\"Apr\"]=\"04\"
+  mon[\"May\"]=\"05\"; mon[\"Jun\"]=\"06\"; mon[\"Jul\"]=\"07\"; mon[\"Aug\"]=\"08\"
+  mon[\"Sep\"]=\"09\"; mon[\"Oct\"]=\"10\"; mon[\"Nov\"]=\"11\"; mon[\"Dec\"]=\"12\"
+}
+\$7 ~ /^\/go\// {
+  match(\$0, /\[([0-9]{2})\/([A-Z][a-z]{2})\/([0-9]{4})/, a)
+  if (a[1] != \"\") {
+    day = a[3] mon[a[2]] a[1]
+    split(\$7, p, \"/\")
+    print day, p[3]
+  }
+}
+' >> /tmp/stats_app_detail.tmp
+done
 "
-sudo chmod 644 /tmp/stats_app.tmp
+sudo chmod 644 /tmp/stats_app.tmp /tmp/stats_app_detail.tmp
 
 # ---- 构建月份列表 ----
 MONTHS=$(awk '{print substr($1,1,6)}' /tmp/stats_daily.tmp | sort -u)
@@ -209,6 +249,26 @@ HTMLHEAD2
       bar_w=$(( h * 400 / APP_MAX ))
       echo "<div class=\"bar\"><span class=\"label\">$dt</span><div class=\"fill\" style=\"width:${bar_w}px\"></div><span class=\"cnt\">$h</span></div>" >> "$OUTFILE"
     done < /tmp/stats_app_month.tmp
+
+    # 当月各 app 点击汇总
+    echo '<h2>各应用点击</h2>' >> "$OUTFILE"
+    > /tmp/stats_app_names.tmp
+    while read d name; do
+      test "${d:0:6}" != "$MONTH_PREFIX" && continue
+      echo "$name" >> /tmp/stats_app_names.tmp
+    done < /tmp/stats_app_detail.tmp
+    sort /tmp/stats_app_names.tmp | uniq -c | sort -rn | while read cnt name; do
+      bar_w=$(( cnt * 400 / APP_MAX ))
+      label="$name"
+      case "$name" in
+        ai-recorder) label="AI Recorder" ;;
+        eye-gym)     label="Eye Gym" ;;
+        kids-points) label="Kids Points" ;;
+        bonsai)      label="Bonsai" ;;
+      esac
+      echo "<div class=\"bar\"><span class=\"label\">$label</span><div class=\"fill\" style=\"width:${bar_w}px\"></div><span class=\"cnt\">$cnt</span></div>" >> "$OUTFILE"
+    done
+    rm -f /tmp/stats_app_names.tmp
   fi
 
   rm -f /tmp/stats_app_month.tmp
@@ -230,5 +290,5 @@ for m in $MONTHS; do
   echo "  -> $HF"
 done
 
-sudo rm -f /tmp/stats_daily.tmp /tmp/stats_app.tmp
+sudo rm -f /tmp/stats_daily.tmp /tmp/stats_app.tmp /tmp/stats_app_detail.tmp
 echo "Done: $OUT"
