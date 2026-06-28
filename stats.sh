@@ -224,54 +224,70 @@ HTMLHEAD2
     echo "<div class=\"bar\"><span class=\"label\">$dt</span><div class=\"fill\" style=\"width:${bar_w}px\"></div><span class=\"cnt\">$h</span></div>" >> "$OUTFILE"
   done < /tmp/stats_month.tmp
 
-  # ---- App Store 点击统计 ----
-  APP_TOTAL=0; APP_DAYS=0; APP_MAX=1
-  > /tmp/stats_app_month.tmp
-  while read d h; do
+  # ---- App Store 点击统计（按日按app彩色分段） ----
+  # 先聚合：从 stats_app_detail.tmp 得到 日期 app 次数的三元组
+  > /tmp/stats_app_agg.tmp
+  while read d name; do
     test "${d:0:6}" != "$MONTH_PREFIX" && continue
-    APP_TOTAL=$((APP_TOTAL + h))
-    APP_DAYS=$((APP_DAYS + 1))
-    test "$h" -gt "$APP_MAX" && APP_MAX=$h
-    echo "$d $h" >> /tmp/stats_app_month.tmp
-  done < /tmp/stats_app.tmp
+    test "$name" = "test" && continue
+    echo "$d $name" >> /tmp/stats_app_agg.tmp
+  done < /tmp/stats_app_detail.tmp
 
-  if [ "$APP_DAYS" -gt 0 ]; then
-    APP_AVG=$(( APP_TOTAL / APP_DAYS ))
+  APP_TOTAL=$(wc -l < /tmp/stats_app_agg.tmp)
+  APP_DAYS=$(awk '{print $1}' /tmp/stats_app_agg.tmp | sort -u | wc -l)
+  APP_MAX=$(sort /tmp/stats_app_agg.tmp | uniq -c | sort -rn | head -1 | awk '{print $1}')
+
+  if [ "$APP_TOTAL" -gt 0 ]; then
+    APP_AVG=$(( APP_TOTAL / (APP_DAYS > 0 ? APP_DAYS : 1) ))
+
+    # CSS 颜色定义
+    echo '<style>
+    .app-ai-recorder{background:#FF5B22}
+    .app-eye-gym{background:#22C55E}
+    .app-kids-points{background:#FFB800}
+    .app-bonsai{background:#593A00}
+    .legend{display:flex;flex-wrap:wrap;gap:16px;margin:12px 0 24px;font-size:13px}
+    .legend span{display:inline-flex;align-items:center;gap:6px}
+    .legend .dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+    .bar-group{margin:6px 0;display:flex;align-items:center;gap:10px;font-size:14px}
+    .bar-group .label{min-width:90px;font-family:monospace}
+    .bar-group .seg{height:20px;min-width:2px}
+    .bar-group .cnt{min-width:50px;text-align:right;font-weight:600}
+    </style>' >> "$OUTFILE"
+
     echo "<h2>App Store 点击</h2>" >> "$OUTFILE"
     echo "<div class=\"summary\">" >> "$OUTFILE"
     echo "<div class=\"summary-item\"><div class=\"val\">$APP_TOTAL</div><div class=\"lbl\">月总点击</div></div>" >> "$OUTFILE"
     echo "<div class=\"summary-item\"><div class=\"val\">$APP_AVG</div><div class=\"lbl\">日均点击</div></div>" >> "$OUTFILE"
     echo "</div>" >> "$OUTFILE"
 
-    echo '<h2>每日点击</h2>' >> "$OUTFILE"
-    while read d h; do
-      dt="${d:0:4}-${d:4:2}-${d:6:2}"
-      bar_w=$(( h * 400 / APP_MAX ))
-      echo "<div class=\"bar\"><span class=\"label\">$dt</span><div class=\"fill\" style=\"width:${bar_w}px\"></div><span class=\"cnt\">$h</span></div>" >> "$OUTFILE"
-    done < /tmp/stats_app_month.tmp
+    # 图例
+    echo '<div class="legend">' >> "$OUTFILE"
+    echo '<span><span class="dot app-ai-recorder"></span>AI Recorder</span>' >> "$OUTFILE"
+    echo '<span><span class="dot app-eye-gym"></span>Eye Gym</span>' >> "$OUTFILE"
+    echo '<span><span class="dot app-kids-points"></span>Kids Points</span>' >> "$OUTFILE"
+    echo '<span><span class="dot app-bonsai"></span>Bonsai</span>' >> "$OUTFILE"
+    echo '</div>' >> "$OUTFILE"
 
-    # 当月各 app 点击汇总
-    echo '<h2>各应用点击</h2>' >> "$OUTFILE"
-    > /tmp/stats_app_names.tmp
-    while read d name; do
-      test "${d:0:6}" != "$MONTH_PREFIX" && continue
-      echo "$name" >> /tmp/stats_app_names.tmp
-    done < /tmp/stats_app_detail.tmp
-    sort /tmp/stats_app_names.tmp | grep -v '^test$' | uniq -c | sort -rn | while read cnt name; do
-      bar_w=$(( cnt * 400 / APP_MAX ))
-      label="$name"
-      case "$name" in
-        ai-recorder) label="AI Recorder" ;;
-        eye-gym)     label="Eye Gym" ;;
-        kids-points) label="Kids Points" ;;
-        bonsai)      label="Bonsai" ;;
-      esac
-      echo "<div class=\"bar\"><span class=\"label\">$label</span><div class=\"fill\" style=\"width:${bar_w}px\"></div><span class=\"cnt\">$cnt</span></div>" >> "$OUTFILE"
+    # 每日彩色分段条
+    echo '<h2>每日点击</h2>' >> "$OUTFILE"
+    for d in $(awk '{print $1}' /tmp/stats_app_agg.tmp | sort -u); do
+      dt="${d:0:4}-${d:4:2}-${d:6:2}"
+      day_total=$(grep -c "^$d " /tmp/stats_app_agg.tmp)
+      echo "<div class=\"bar-group\"><span class=\"label\">$dt</span>" >> "$OUTFILE"
+      for name in ai-recorder eye-gym kids-points bonsai; do
+        app_cnt=$(grep "^$d $name$" /tmp/stats_app_agg.tmp | wc -l)
+        if [ "$app_cnt" -gt 0 ]; then
+          seg_w=$(( app_cnt * 400 / (APP_MAX > 0 ? APP_MAX : 1) ))
+          test "$seg_w" -lt 3 && seg_w=3
+          echo "<div class=\"seg app-${name}\" style=\"width:${seg_w}px\" title=\"$name: $app_cnt\"></div>" >> "$OUTFILE"
+        fi
+      done
+      echo "<span class=\"cnt\">$day_total</span></div>" >> "$OUTFILE"
     done
-    rm -f /tmp/stats_app_names.tmp
   fi
 
-  rm -f /tmp/stats_app_month.tmp
+  rm -f /tmp/stats_app_agg.tmp /tmp/stats_app_month.tmp
 
   rm -f /tmp/stats_month.tmp
   echo '</body></html>' >> "$OUTFILE"
