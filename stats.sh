@@ -120,7 +120,7 @@ h2{font-size:15px;margin:32px 0 12px;color:#111}
 .bar{margin:4px 0;display:flex;align-items:center;gap:6px;font-size:14px}
 .bar .label{min-width:90px;font-family:monospace}
 .bar .fill{height:20px;border-radius:4px;background:#111;opacity:.75;min-width:2px}
-.bar .cnt{min-width:60px;text-align:right;font-weight:600}
+.bar .cnt{margin-left:4px;text-align:left;font-weight:600}
 .note{color:#999;font-size:13px;margin-top:16px}
 .summary{display:flex;gap:40px;flex-wrap:wrap;margin:20px 0}
 .summary-item{text-align:center}
@@ -165,7 +165,7 @@ h2{font-size:15px;margin:32px 0 12px;color:#111}
 .bar{margin:4px 0;display:flex;align-items:center;gap:6px;font-size:14px}
 .bar .label{min-width:90px;font-family:monospace}
 .bar .fill{height:20px;border-radius:4px;background:#111;opacity:.75;min-width:2px}
-.bar .cnt{min-width:60px;text-align:right;font-weight:600}
+.bar .cnt{margin-left:4px;text-align:left;font-weight:600}
 .note{color:#999;font-size:13px;margin-top:16px}
 .summary{display:flex;gap:40px;flex-wrap:wrap;margin:20px 0}
 .summary-item{text-align:center}
