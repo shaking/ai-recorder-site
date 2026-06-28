@@ -112,11 +112,11 @@ cat > "$OUT" << 'HTMLHEAD'
 <style>
 body{font-family:-apple-system,sans-serif;max-width:800px;margin:60px auto;padding:0 20px;color:#111;background:#F8F5EC}
 h1{font-size:24px;margin-bottom:4px}
-h2{font-size:15px;margin:32px 0 12px;color:#593A00}
+h2{font-size:15px;margin:32px 0 12px;color:#111}
 .months{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
-.months a{text-decoration:none;padding:6px 16px;border-radius:20px;font-size:14px;border:1px solid #ddd;color:#593A00;background:#fff}
-.months a.active{background:#593A00;color:#fff;border-color:#593A00;font-weight:600}
-.num{font-size:56px;font-weight:800;color:#593A00;line-height:1}
+.months a{text-decoration:none;padding:6px 16px;border-radius:20px;font-size:14px;border:1px solid #ddd;color:#111;background:#fff}
+.months a.active{background:#111;color:#fff;border-color:#111;font-weight:600}
+.num{font-size:56px;font-weight:800;color:#111;line-height:1}
 .bar{margin:4px 0;display:flex;align-items:center;gap:10px;font-size:14px}
 .bar .label{min-width:90px;font-family:monospace}
 .bar .fill{height:20px;border-radius:4px;background:#111;opacity:.75;min-width:2px}
@@ -124,7 +124,7 @@ h2{font-size:15px;margin:32px 0 12px;color:#593A00}
 .note{color:#999;font-size:13px;margin-top:16px}
 .summary{display:flex;gap:40px;flex-wrap:wrap;margin:20px 0}
 .summary-item{text-align:center}
-.summary-item .val{font-size:36px;font-weight:800;color:#593A00}
+.summary-item .val{font-size:36px;font-weight:800;color:#111}
 .summary-item .lbl{font-size:12px;color:#999;margin-top:4px}
 </style>
 </head>
@@ -157,11 +157,11 @@ generate_month_page() {
 <style>
 body{font-family:-apple-system,sans-serif;max-width:800px;margin:60px auto;padding:0 20px;color:#111;background:#F8F5EC}
 h1{font-size:24px;margin-bottom:4px}
-h2{font-size:15px;margin:32px 0 12px;color:#593A00}
+h2{font-size:15px;margin:32px 0 12px;color:#111}
 .months{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
-.months a{text-decoration:none;padding:6px 16px;border-radius:20px;font-size:14px;border:1px solid #ddd;color:#593A00;background:#fff}
-.months a.active{background:#593A00;color:#fff;border-color:#593A00;font-weight:600}
-.num{font-size:56px;font-weight:800;color:#593A00;line-height:1}
+.months a{text-decoration:none;padding:6px 16px;border-radius:20px;font-size:14px;border:1px solid #ddd;color:#111;background:#fff}
+.months a.active{background:#111;color:#fff;border-color:#111;font-weight:600}
+.num{font-size:56px;font-weight:800;color:#111;line-height:1}
 .bar{margin:4px 0;display:flex;align-items:center;gap:10px;font-size:14px}
 .bar .label{min-width:90px;font-family:monospace}
 .bar .fill{height:20px;border-radius:4px;background:#111;opacity:.75;min-width:2px}
@@ -169,7 +169,7 @@ h2{font-size:15px;margin:32px 0 12px;color:#593A00}
 .note{color:#999;font-size:13px;margin-top:16px}
 .summary{display:flex;gap:40px;flex-wrap:wrap;margin:20px 0}
 .summary-item{text-align:center}
-.summary-item .val{font-size:36px;font-weight:800;color:#593A00}
+.summary-item .val{font-size:36px;font-weight:800;color:#111}
 .summary-item .lbl{font-size:12px;color:#999;margin-top:4px}
 </style>
 </head>
