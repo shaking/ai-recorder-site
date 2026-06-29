@@ -241,9 +241,10 @@ HTMLHEAD2
     echo "$d $name" >> /tmp/stats_app_agg.tmp
   done < /tmp/stats_app_detail.tmp
 
-  APP_TOTAL=$(wc -l < /tmp/stats_app_agg.tmp)
-  APP_DAYS=$(awk '{print $1}' /tmp/stats_app_agg.tmp | sort -u | wc -l)
-  APP_MAX=$(sort /tmp/stats_app_agg.tmp | uniq -c | sort -rn | head -1 | awk '{print $1}')
+  APP_TOTAL=$(wc -l < /tmp/stats_app_agg.tmp | tr -d ' ')
+  APP_DAYS=$(awk '{print $1}' /tmp/stats_app_agg.tmp | sort -u | wc -l | tr -d ' ')
+  # APP_MAX = 单日总点击的最大值，不是单应用最大
+  APP_MAX=$(awk '{print $1}' /tmp/stats_app_agg.tmp | sort | uniq -c | sort -rn | head -1 | awk '{print $1}')
 
   if [ "$APP_TOTAL" -gt 0 ]; then
     APP_AVG=$(( APP_TOTAL / (APP_DAYS > 0 ? APP_DAYS : 1) ))
@@ -258,7 +259,7 @@ HTMLHEAD2
     .legend span{display:inline-flex;align-items:center;gap:6px}
     .legend .dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
     .bar-group{margin:4px 0;display:flex;align-items:center;gap:6px;font-size:14px}
-.app-track{flex:1;height:20px;display:flex;gap:2px;border-radius:4px;overflow:hidden}
+.app-track{height:20px;display:flex;gap:2px;border-radius:4px;overflow:hidden}
 .app-track .seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:600}
 .app-track .seg:first-child{border-radius:4px 0 0 4px}
 .app-track .seg:last-child{border-radius:0 4px 4px 0}
@@ -284,7 +285,8 @@ HTMLHEAD2
     for d in $(awk '{print $1}' /tmp/stats_app_agg.tmp | sort -u); do
       dt="${d:0:4}-${d:4:2}-${d:6:2}"
       day_total=$(grep -c "^$d " /tmp/stats_app_agg.tmp)
-      echo "<div class=\"bar-group\"><span class=\"label\">$dt</span><div class=\"app-track\">" >> "$OUTFILE"
+      track_pct=$(( day_total * 100 / APP_MAX ))
+      echo "<div class=\"bar-group\"><span class=\"label\">$dt</span><div class=\"app-track\" style=\"width:${track_pct}%\">" >> "$OUTFILE"
       for name in ai-recorder eye-gym kids-points bonsai; do
         app_cnt=$(grep "^$d $name$" /tmp/stats_app_agg.tmp | wc -l)
         if [ "$app_cnt" -gt 0 ]; then
