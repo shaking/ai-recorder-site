@@ -259,7 +259,7 @@ HTMLHEAD2
     .legend span{display:inline-flex;align-items:center;gap:6px}
     .legend .dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
     .bar-group{margin:4px 0;display:flex;align-items:center;gap:6px;font-size:14px}
-.app-track{height:20px;display:flex;gap:2px;border-radius:4px;overflow:hidden}
+.app-track{flex:1;height:20px;display:flex;gap:2px;border-radius:4px;overflow:hidden;background:#f0f0f0}
 .app-track .seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:600}
 .app-track .seg:first-child{border-radius:4px 0 0 4px}
 .app-track .seg:last-child{border-radius:0 4px 4px 0}
@@ -285,8 +285,7 @@ HTMLHEAD2
     for d in $(awk '{print $1}' /tmp/stats_app_agg.tmp | sort -u); do
       dt="${d:0:4}-${d:4:2}-${d:6:2}"
       day_total=$(grep -c "^$d " /tmp/stats_app_agg.tmp)
-      track_pct=$(( day_total * 100 / APP_MAX ))
-      echo "<div class=\"bar-group\"><span class=\"label\">$dt</span><div class=\"app-track\" style=\"width:${track_pct}%\">" >> "$OUTFILE"
+      echo "<div class=\"bar-group\"><span class=\"label\">$dt</span><div class=\"app-track\">" >> "$OUTFILE"
       for name in ai-recorder eye-gym kids-points bonsai; do
         app_cnt=$(grep "^$d $name$" /tmp/stats_app_agg.tmp | wc -l)
         if [ "$app_cnt" -gt 0 ]; then
