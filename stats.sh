@@ -127,9 +127,10 @@ h2{font-size:15px;margin:32px 0 12px;color:#111}
 .months a.active{background:#111;color:#fff;border-color:#111;font-weight:600}
 .num{font-size:56px;font-weight:800;color:#111;line-height:1}
 .bar{margin:4px 0;display:flex;align-items:center;gap:6px;font-size:14px}
-.bar .label{width:90px;flex-shrink:0;font-family:monospace}
-.bar .fill{height:20px;border-radius:4px;background:#111;opacity:.75;min-width:2px}
-.bar .cnt{width:40px;flex-shrink:0;margin-left:4px;text-align:left;font-weight:600}
+.bar .label{width:88px;flex-shrink:0;font-family:monospace;font-size:13px}
+.bar-track{flex:1;height:20px;border-radius:4px;overflow:hidden;background:#f0f0f0}
+.bar-track .fill{height:100%;border-radius:4px;background:#111;opacity:.75}
+.bar .cnt{width:36px;flex-shrink:0;margin-left:4px;text-align:left;font-weight:600;font-size:13px}
 .note{color:#999;font-size:13px;margin-top:16px}
 .summary{display:flex;gap:40px;flex-wrap:wrap;margin:20px 0}
 .summary-item{text-align:center}
@@ -172,9 +173,10 @@ h2{font-size:15px;margin:32px 0 12px;color:#111}
 .months a.active{background:#111;color:#fff;border-color:#111;font-weight:600}
 .num{font-size:56px;font-weight:800;color:#111;line-height:1}
 .bar{margin:4px 0;display:flex;align-items:center;gap:6px;font-size:14px}
-.bar .label{width:90px;flex-shrink:0;font-family:monospace}
-.bar .fill{height:20px;border-radius:4px;background:#111;opacity:.75;min-width:2px}
-.bar .cnt{width:40px;flex-shrink:0;margin-left:4px;text-align:left;font-weight:600}
+.bar .label{width:88px;flex-shrink:0;font-family:monospace;font-size:13px}
+.bar-track{flex:1;height:20px;border-radius:4px;overflow:hidden;background:#f0f0f0}
+.bar-track .fill{height:100%;border-radius:4px;background:#111;opacity:.75}
+.bar .cnt{width:36px;flex-shrink:0;margin-left:4px;text-align:left;font-weight:600;font-size:13px}
 .note{color:#999;font-size:13px;margin-top:16px}
 .summary{display:flex;gap:40px;flex-wrap:wrap;margin:20px 0}
 .summary-item{text-align:center}
@@ -230,7 +232,7 @@ HTMLHEAD2
   while read d h; do
     dt="${d:0:4}-${d:4:2}-${d:6:2}"
     pct=$(( h * 100 / MAX ))
-    echo "<div class=\"bar\"><span class=\"label\">$dt</span><div class=\"fill\" style=\"width:${pct}%\"></div><span class=\"cnt\">$h</span></div>" >> "$OUTFILE"
+    echo "<div class=\"bar\"><span class=\"label\">$dt</span><div class=\"bar-track\"><div class=\"fill\" style=\"width:${pct}%\"></div></div><span class=\"cnt\">$h</span></div>" >> "$OUTFILE"
   done < /tmp/stats_month.tmp
 
   # ---- App Store 点击统计（按日按app彩色分段） ----
