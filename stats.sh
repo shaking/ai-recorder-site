@@ -120,7 +120,7 @@ cat > "$OUT" << 'HTMLHEAD'
 <title>浮空岛 · 访问统计</title>
 <style>
 body{font-family:-apple-system,sans-serif;max-width:800px;margin:60px auto;padding:0 20px;color:#111;background:#fff}
-h1{font-size:28px;margin-bottom:4px}
+h1{font-size:32px;margin-bottom:6px}
 h2{font-size:15px;margin:32px 0 12px;color:#111}
 .picker{margin:16px 0}
 .picker select{font-size:17px;font-weight:600;font-family:inherit;color:#111;padding:8px 12px}
@@ -169,7 +169,7 @@ generate_month_page() {
 <title>浮空岛 · ${YM} 访问统计</title>
 <style>
 body{font-family:-apple-system,sans-serif;max-width:800px;margin:60px auto;padding:0 20px;color:#111;background:#fff}
-h1{font-size:28px;margin-bottom:4px}
+h1{font-size:32px;margin-bottom:6px}
 h2{font-size:15px;margin:32px 0 12px;color:#111}
 .picker{margin:16px 0}
 .picker select{font-size:17px;font-weight:600;font-family:inherit;color:#111;padding:8px 12px}
