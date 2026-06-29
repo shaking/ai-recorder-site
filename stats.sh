@@ -142,7 +142,7 @@ h2{font-size:15px;margin:32px 0 12px;color:#111}
 <h1>浮空岛 · 访问统计</h1>
 HTMLHEAD
 
-echo "<p class=\"note\">每日独立访客 · 行为识别自动过滤扫描 更新时间 $NOW</p>" >> "$OUT"
+echo "<p class=\"note\">每日独立访客 · 行为识别自动过滤扫描<br>更新时间 $NOW</p>" >> "$OUT"
 
 echo '<div class="months">' >> "$OUT"
 for m in $MONTHS; do
@@ -188,7 +188,7 @@ h2{font-size:15px;margin:32px 0 12px;color:#111}
 <h1>浮空岛 · 访问统计</h1>
 HTMLHEAD2
 
-  echo "<p class=\"note\">每日独立访客 · 行为识别自动过滤扫描 更新时间 $NOW</p>" >> "$OUTFILE"
+  echo "<p class=\"note\">每日独立访客 · 行为识别自动过滤扫描<br>更新时间 $NOW</p>" >> "$OUTFILE"
 
   echo '<div class="months">' >> "$OUTFILE"
   for m in $MONTHS; do
