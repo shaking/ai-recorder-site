@@ -290,8 +290,8 @@ HTMLHEAD2
       for name in ai-recorder eye-gym kids-points bonsai; do
         app_cnt=$(grep "^$d $name$" /tmp/stats_app_agg.tmp | wc -l)
         if [ "$app_cnt" -gt 0 ]; then
-          seg_pct=$(( app_cnt * 100 / day_total ))
-          test "$seg_pct" -lt 5 && seg_pct=5
+          seg_pct=$(( app_cnt * 100 / (APP_MAX > 0 ? APP_MAX : 1) ))
+          test "$seg_pct" -lt 2 && seg_pct=2
           echo "<div class=\"seg app-${name}\" style=\"width:${seg_pct}%\">$app_cnt</div>" >> "$OUTFILE"
         fi
       done
