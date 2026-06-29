@@ -128,7 +128,7 @@ h2{font-size:15px;margin:32px 0 12px;color:#111}
 .num{font-size:56px;font-weight:800;color:#111;line-height:1}
 .bar{margin:4px 0;display:flex;align-items:center;gap:6px;font-size:14px}
 .bar .label{min-width:90px;font-family:monospace}
-.bar .fill{height:20px;border-radius:4px;background:#111;opacity:.75;min-width:2px}
+.bar .fill{height:20px;border-radius:4px;background:#111;opacity:.75;min-width:2px;max-width:100%}
 .bar .cnt{margin-left:4px;text-align:left;font-weight:600}
 .note{color:#999;font-size:13px;margin-top:16px}
 .summary{display:flex;gap:40px;flex-wrap:wrap;margin:20px 0}
@@ -173,7 +173,7 @@ h2{font-size:15px;margin:32px 0 12px;color:#111}
 .num{font-size:56px;font-weight:800;color:#111;line-height:1}
 .bar{margin:4px 0;display:flex;align-items:center;gap:6px;font-size:14px}
 .bar .label{min-width:90px;font-family:monospace}
-.bar .fill{height:20px;border-radius:4px;background:#111;opacity:.75;min-width:2px}
+.bar .fill{height:20px;border-radius:4px;background:#111;opacity:.75;min-width:2px;max-width:100%}
 .bar .cnt{margin-left:4px;text-align:left;font-weight:600}
 .note{color:#999;font-size:13px;margin-top:16px}
 .summary{display:flex;gap:40px;flex-wrap:wrap;margin:20px 0}
@@ -229,8 +229,8 @@ HTMLHEAD2
   echo '<h2>每日访客</h2>' >> "$OUTFILE"
   while read d h; do
     dt="${d:0:4}-${d:4:2}-${d:6:2}"
-    bar_w=$(( h * 400 / MAX ))
-    echo "<div class=\"bar\"><span class=\"label\">$dt</span><div class=\"fill\" style=\"width:${bar_w}px\"></div><span class=\"cnt\">$h</span></div>" >> "$OUTFILE"
+    pct=$(( h * 100 / MAX ))
+    echo "<div class=\"bar\"><span class=\"label\">$dt</span><div class=\"fill\" style=\"width:${pct}%\"></div><span class=\"cnt\">$h</span></div>" >> "$OUTFILE"
   done < /tmp/stats_month.tmp
 
   # ---- App Store 点击统计（按日按app彩色分段） ----
@@ -260,7 +260,7 @@ HTMLHEAD2
     .legend .dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
     .bar-group{margin:4px 0;display:flex;align-items:center;gap:2px;font-size:14px}
     .bar-group .label{min-width:90px;font-family:monospace}
-    .bar-group .seg{height:20px;min-width:24px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600;border-radius:4px}
+    .bar-group .seg{height:20px;min-width:24px;max-width:100%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600;border-radius:4px}
     .bar-group .cnt{margin-left:4px;text-align:left;font-weight:600}
     </style>' >> "$OUTFILE"
 
@@ -286,9 +286,9 @@ HTMLHEAD2
       for name in ai-recorder eye-gym kids-points bonsai; do
         app_cnt=$(grep "^$d $name$" /tmp/stats_app_agg.tmp | wc -l)
         if [ "$app_cnt" -gt 0 ]; then
-          seg_w=$(( app_cnt * 400 / (APP_MAX > 0 ? APP_MAX : 1) ))
-          test "$seg_w" -lt 3 && seg_w=3
-          echo "<div class=\"seg app-${name}\" style=\"width:${seg_w}px\">$app_cnt</div>" >> "$OUTFILE"
+          seg_pct=$(( app_cnt * 100 / (APP_MAX > 0 ? APP_MAX : 1) ))
+          test "$seg_pct" -lt 2 && seg_pct=2
+          echo "<div class=\"seg app-${name}\" style=\"width:${seg_pct}%\">$app_cnt</div>" >> "$OUTFILE"
         fi
       done
       echo "<span class=\"cnt\">$day_total</span></div>" >> "$OUTFILE"
