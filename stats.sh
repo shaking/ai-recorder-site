@@ -4,32 +4,41 @@ LOG="/var/log/nginx/access.log"
 NOW=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M')
 CUR_MONTH=$(TZ='Asia/Shanghai' date '+%Y-%m')
 
-# ---- 过滤规则 ----
+# ---- 过滤规则（行为识别，不再依赖IP黑名单）----
 FILTER_PATTERN='(Chrome|Safari|Firefox|Edge)'
 EXCLUDE_UA='(bot|crawler|spider|scanner|python|curl|wget|zgrab|Censys|Expanse|nmap|masscan|Go-http|Hello from)'
-EXCLUDE_IP='69\.5\.20\.93|35\.200\.106|34\.156\.217|35\.243\.233|34\.130\.13|34\.162\.119|80\.94\.95|94\.26\.88|80\.87\.206|34\.57\.197|5\.61\.209|8\.231\.164|35\.240\.198|213\.209\.159|192\.253\.248'
+# 扫描特征：命中的路径全是假路径 → 扫漏洞的
+SUS_PATHS='(\.env|\.git|wp-admin|actuator|admin|\.php|\.asp|config|backup|sql|\.yml|\.ini)'
 
-# ---- 从日志内容提取真实日期，按日统计 ----
-# nginx日志格式: [DD/Mon/YYYY:HH:MM:SS +TZ]
-# awk 提取日期、过滤、按日计数
+# ---- 每日访客：按独立IP统计，只计浏览首页的真人 ----
+# 行为特征：请求了 / 且返回200/304、浏览器UA、没扫可疑路径
 sudo sh -c "
 > /tmp/stats_daily.tmp
 for f in /var/log/nginx/access.log*; do
   zcat -f \"\$f\" 2>/dev/null
-done | awk -v ua=\"$FILTER_PATTERN\" -v exua=\"$EXCLUDE_UA\" -v exip=\"$EXCLUDE_IP\" '
+done | awk -v ua=\"$FILTER_PATTERN\" -v exua=\"$EXCLUDE_UA\" -v susp=\"$SUS_PATHS\" '
 BEGIN {
   mon[\"Jan\"]=\"01\"; mon[\"Feb\"]=\"02\"; mon[\"Mar\"]=\"03\"; mon[\"Apr\"]=\"04\"
   mon[\"May\"]=\"05\"; mon[\"Jun\"]=\"06\"; mon[\"Jul\"]=\"07\"; mon[\"Aug\"]=\"08\"
   mon[\"Sep\"]=\"09\"; mon[\"Oct\"]=\"10\"; mon[\"Nov\"]=\"11\"; mon[\"Dec\"]=\"12\"
 }
-\$0 !~ exua && \$0 !~ exip && \$0 ~ ua {
-  match(\$0, /\[([0-9]{2})\/([A-Z][a-z]{2})\/([0-9]{4})/, a)
-  if (a[1] != \"\") {
-    day = a[3] mon[a[2]] a[1]   # -> 20260625
-    cnt[day]++
+# 只看首页请求
+\$7 == \"/\" && \$0 ~ ua && \$0 !~ exua && \$7 !~ susp {
+  # 只看成功响应
+  if (\$9 == \"200\" || \$9 == \"304\") {
+    match(\$0, /\[([0-9]{2})\/([A-Z][a-z]{2})\/([0-9]{4})/, a)
+    if (a[1] != \"\") {
+      day = a[3] mon[a[2]] a[1]
+      seen[day][\$1] = 1      # 按日按IP去重
+    }
   }
 }
-END { for (d in cnt) print d, cnt[d] }
+END {
+  for (d in seen)
+    for (ip in seen[d])
+      cnt[d]++
+  for (d in cnt) print d, cnt[d]
+}
 ' | sort > /tmp/stats_daily.tmp
 "
 
