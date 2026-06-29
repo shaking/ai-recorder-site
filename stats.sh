@@ -122,9 +122,9 @@ cat > "$OUT" << 'HTMLHEAD'
 body{font-family:-apple-system,sans-serif;max-width:800px;margin:60px auto;padding:0 20px;color:#111;background:#fff}
 h1{font-size:24px;margin-bottom:4px}
 h2{font-size:15px;margin:32px 0 12px;color:#111}
-.months{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
-.months a{text-decoration:none;padding:6px 16px;border-radius:20px;font-size:14px;border:1px solid #ddd;color:#111;background:#fff}
-.months a.active{background:#111;color:#fff;border-color:#111;font-weight:600}
+.picker{display:inline-flex;align-items:center;gap:8px;margin:16px 0}
+.picker select{-webkit-appearance:none;appearance:none;padding:6px 32px 6px 12px;border-radius:8px;font-size:15px;font-weight:600;border:1px solid #ccc;color:#111;background:#fff;cursor:pointer;font-family:inherit}
+.picker::after{content:'▾';position:relative;right:28px;pointer-events:none;font-size:11px;color:#666}
 .num{font-size:56px;font-weight:800;color:#111;line-height:1}
 .bar{margin:4px 0;display:flex;align-items:center;gap:6px;font-size:14px}
 .bar .label,.bar-group .label{width:88px;flex-shrink:0;font-size:13px}
@@ -144,13 +144,17 @@ HTMLHEAD
 
 echo "<p class=\"note\">每日独立访客 · 行为识别自动过滤扫描<br>更新时间 $NOW</p>" >> "$OUT"
 
-echo '<div class="months">' >> "$OUT"
+echo '<div class="picker"><select onchange="var v=this.value;if(v)window.location.href=v">' >> "$OUT"
 for m in $MONTHS; do
   ym="${m:0:4}-${m:4:2}"
   label="${ym:0:4}年${ym:5:2}月"
-  echo "<a href=\"stats-${ym}.html\">$label</a>" >> "$OUT"
+  if [ "$ym" = "$CUR_MONTH" ]; then
+    echo "<option value=\"stats.html\" selected>$label</option>" >> "$OUT"
+  else
+    echo "<option value=\"stats-${ym}.html\">$label</option>" >> "$OUT"
+  fi
 done
-echo '</div>' >> "$OUT"
+echo '</select></div>' >> "$OUT"
 
 # ---- 当月详细视图 ----
 generate_month_page() {
@@ -168,9 +172,9 @@ generate_month_page() {
 body{font-family:-apple-system,sans-serif;max-width:800px;margin:60px auto;padding:0 20px;color:#111;background:#fff}
 h1{font-size:24px;margin-bottom:4px}
 h2{font-size:15px;margin:32px 0 12px;color:#111}
-.months{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
-.months a{text-decoration:none;padding:6px 16px;border-radius:20px;font-size:14px;border:1px solid #ddd;color:#111;background:#fff}
-.months a.active{background:#111;color:#fff;border-color:#111;font-weight:600}
+.picker{display:inline-flex;align-items:center;gap:8px;margin:16px 0}
+.picker select{-webkit-appearance:none;appearance:none;padding:6px 32px 6px 12px;border-radius:8px;font-size:15px;font-weight:600;border:1px solid #ccc;color:#111;background:#fff;cursor:pointer;font-family:inherit}
+.picker::after{content:'▾';position:relative;right:28px;pointer-events:none;font-size:11px;color:#666}
 .num{font-size:56px;font-weight:800;color:#111;line-height:1}
 .bar{margin:4px 0;display:flex;align-items:center;gap:6px;font-size:14px}
 .bar .label,.bar-group .label{width:88px;flex-shrink:0;font-size:13px}
@@ -190,23 +194,19 @@ HTMLHEAD2
 
   echo "<p class=\"note\">每日独立访客 · 行为识别自动过滤扫描<br>更新时间 $NOW</p>" >> "$OUTFILE"
 
-  echo '<div class="months">' >> "$OUTFILE"
+  echo '<div class="picker"><select onchange="var v=this.value;if(v)window.location.href=v">' >> "$OUTFILE"
   for m in $MONTHS; do
-    label="${m:0:4}年${m:4:2}月"
     my="${m:0:4}-${m:4:2}"
-    if [ "$my" = "$YM" ]; then
-      if [ "$my" = "$CUR_MONTH" ]; then
-        echo "<a href=\"stats.html\" class=\"active\">$label</a>" >> "$OUTFILE"
-      else
-        echo "<a href=\"stats-${my}.html\" class=\"active\">$label</a>" >> "$OUTFILE"
-      fi
-    elif [ "$my" = "$CUR_MONTH" ]; then
-      echo "<a href=\"stats.html\">$label</a>" >> "$OUTFILE"
+    label="${my:0:4}年${my:5:2}月"
+    if [ "$my" = "$CUR_MONTH" ]; then
+      sel=""; if [ "$my" = "$YM" ]; then sel=" selected"; fi
+      echo "<option value=\"stats.html\"$sel>$label</option>" >> "$OUTFILE"
     else
-      echo "<a href=\"stats-${my}.html\">$label</a>" >> "$OUTFILE"
+      sel=""; if [ "$my" = "$YM" ]; then sel=" selected"; fi
+      echo "<option value=\"stats-${my}.html\"$sel>$label</option>" >> "$OUTFILE"
     fi
   done
-  echo '</div>' >> "$OUTFILE"
+  echo '</select></div>' >> "$OUTFILE"
 
   MONTH_PREFIX=$(echo "$YM" | tr -d '-')
   TOTAL=0; DAYS=0; MAX=1
