@@ -123,7 +123,7 @@ body{font-family:-apple-system,sans-serif;max-width:800px;margin:60px auto;paddi
 h1{font-size:24px;margin-bottom:4px}
 h2{font-size:15px;margin:32px 0 12px;color:#111}
 .picker{margin:16px 0}
-.picker select{font-size:17px;font-weight:600;font-family:inherit;color:#111;padding:8px 32px 8px 12px}
+.picker select{font-size:17px;font-weight:600;font-family:inherit;color:#111;padding:8px 12px}
 .num{font-size:56px;font-weight:800;color:#111;line-height:1}
 .bar{margin:4px 0;display:flex;align-items:center;gap:6px;font-size:14px}
 .bar .label,.bar-group .label{width:88px;flex-shrink:0;font-size:13px}
@@ -172,7 +172,7 @@ body{font-family:-apple-system,sans-serif;max-width:800px;margin:60px auto;paddi
 h1{font-size:24px;margin-bottom:4px}
 h2{font-size:15px;margin:32px 0 12px;color:#111}
 .picker{margin:16px 0}
-.picker select{font-size:17px;font-weight:600;font-family:inherit;color:#111;padding:8px 32px 8px 12px}
+.picker select{font-size:17px;font-weight:600;font-family:inherit;color:#111;padding:8px 12px}
 .num{font-size:56px;font-weight:800;color:#111;line-height:1}
 .bar{margin:4px 0;display:flex;align-items:center;gap:6px;font-size:14px}
 .bar .label,.bar-group .label{width:88px;flex-shrink:0;font-size:13px}
