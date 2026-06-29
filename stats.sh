@@ -127,7 +127,7 @@ h2{font-size:15px;margin:32px 0 12px;color:#111}
 .months a.active{background:#111;color:#fff;border-color:#111;font-weight:600}
 .num{font-size:56px;font-weight:800;color:#111;line-height:1}
 .bar{margin:4px 0;display:flex;align-items:center;gap:6px;font-size:14px}
-.bar .label,.bar-group .label{width:88px;flex-shrink:0;font-family:monospace;font-size:13px}
+.bar .label,.bar-group .label{width:88px;flex-shrink:0;font-size:13px}
 .bar-track{flex:1;height:20px;border-radius:4px;overflow:hidden;background:#f0f0f0}
 .bar-track .fill{height:100%;border-radius:4px;background:#111;opacity:.75}
 .bar .cnt{width:36px;flex-shrink:0;margin-left:4px;text-align:left;font-weight:600;font-size:13px}
@@ -173,7 +173,7 @@ h2{font-size:15px;margin:32px 0 12px;color:#111}
 .months a.active{background:#111;color:#fff;border-color:#111;font-weight:600}
 .num{font-size:56px;font-weight:800;color:#111;line-height:1}
 .bar{margin:4px 0;display:flex;align-items:center;gap:6px;font-size:14px}
-.bar .label,.bar-group .label{width:88px;flex-shrink:0;font-family:monospace;font-size:13px}
+.bar .label,.bar-group .label{width:88px;flex-shrink:0;font-size:13px}
 .bar-track{flex:1;height:20px;border-radius:4px;overflow:hidden;background:#f0f0f0}
 .bar-track .fill{height:100%;border-radius:4px;background:#111;opacity:.75}
 .bar .cnt{width:36px;flex-shrink:0;margin-left:4px;text-align:left;font-weight:600;font-size:13px}
