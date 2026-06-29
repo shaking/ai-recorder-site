@@ -260,7 +260,7 @@ HTMLHEAD2
     .legend{display:flex;flex-wrap:wrap;gap:16px;margin:12px 0 24px;font-size:13px}
     .legend span{display:inline-flex;align-items:center;gap:6px}
     .legend .dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
-    .bar-group{margin:4px 0;display:flex;align-items:center;gap:2px;font-size:14px}
+    .bar-group{margin:4px 0;display:flex;align-items:center;gap:6px;font-size:14px}
 .app-track{flex:1;height:20px;display:flex;gap:2px;border-radius:4px;overflow:hidden}
 .app-track .seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:600}
 .app-track .seg:first-child{border-radius:4px 0 0 4px}
