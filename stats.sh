@@ -127,9 +127,9 @@ h2{font-size:15px;margin:32px 0 12px;color:#111}
 .months a.active{background:#111;color:#fff;border-color:#111;font-weight:600}
 .num{font-size:56px;font-weight:800;color:#111;line-height:1}
 .bar{margin:4px 0;display:flex;align-items:center;gap:6px;font-size:14px}
-.bar .label{min-width:90px;font-family:monospace}
-.bar .fill{height:20px;border-radius:4px;background:#111;opacity:.75;min-width:2px;max-width:100%}
-.bar .cnt{margin-left:4px;text-align:left;font-weight:600}
+.bar .label{width:90px;flex-shrink:0;font-family:monospace}
+.bar .fill{height:20px;border-radius:4px;background:#111;opacity:.75;min-width:2px}
+.bar .cnt{width:40px;flex-shrink:0;margin-left:4px;text-align:left;font-weight:600}
 .note{color:#999;font-size:13px;margin-top:16px}
 .summary{display:flex;gap:40px;flex-wrap:wrap;margin:20px 0}
 .summary-item{text-align:center}
@@ -172,9 +172,9 @@ h2{font-size:15px;margin:32px 0 12px;color:#111}
 .months a.active{background:#111;color:#fff;border-color:#111;font-weight:600}
 .num{font-size:56px;font-weight:800;color:#111;line-height:1}
 .bar{margin:4px 0;display:flex;align-items:center;gap:6px;font-size:14px}
-.bar .label{min-width:90px;font-family:monospace}
-.bar .fill{height:20px;border-radius:4px;background:#111;opacity:.75;min-width:2px;max-width:100%}
-.bar .cnt{margin-left:4px;text-align:left;font-weight:600}
+.bar .label{width:90px;flex-shrink:0;font-family:monospace}
+.bar .fill{height:20px;border-radius:4px;background:#111;opacity:.75;min-width:2px}
+.bar .cnt{width:40px;flex-shrink:0;margin-left:4px;text-align:left;font-weight:600}
 .note{color:#999;font-size:13px;margin-top:16px}
 .summary{display:flex;gap:40px;flex-wrap:wrap;margin:20px 0}
 .summary-item{text-align:center}
