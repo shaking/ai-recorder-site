@@ -261,9 +261,12 @@ HTMLHEAD2
     .legend span{display:inline-flex;align-items:center;gap:6px}
     .legend .dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
     .bar-group{margin:4px 0;display:flex;align-items:center;gap:2px;font-size:14px}
-    .bar-group .label{min-width:90px;font-family:monospace}
-    .bar-group .seg{height:20px;min-width:24px;max-width:100%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600;border-radius:4px}
-    .bar-group .cnt{margin-left:4px;text-align:left;font-weight:600}
+.app-track{flex:1;height:20px;display:flex;gap:2px;border-radius:4px;overflow:hidden}
+.app-track .seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:600}
+.app-track .seg:first-child{border-radius:4px 0 0 4px}
+.app-track .seg:last-child{border-radius:0 4px 4px 0}
+.app-track .seg:only-child{border-radius:4px}
+.bar-group .cnt{width:36px;flex-shrink:0;margin-left:4px;text-align:left;font-weight:600;font-size:13px}
     </style>' >> "$OUTFILE"
 
     echo "<h2>App Store 每日点击</h2>" >> "$OUTFILE"
@@ -284,16 +287,16 @@ HTMLHEAD2
     for d in $(awk '{print $1}' /tmp/stats_app_agg.tmp | sort -u); do
       dt="${d:0:4}-${d:4:2}-${d:6:2}"
       day_total=$(grep -c "^$d " /tmp/stats_app_agg.tmp)
-      echo "<div class=\"bar-group\"><span class=\"label\">$dt</span>" >> "$OUTFILE"
+      echo "<div class=\"bar-group\"><span class=\"label\">$dt</span><div class=\"app-track\">" >> "$OUTFILE"
       for name in ai-recorder eye-gym kids-points bonsai; do
         app_cnt=$(grep "^$d $name$" /tmp/stats_app_agg.tmp | wc -l)
         if [ "$app_cnt" -gt 0 ]; then
           seg_pct=$(( app_cnt * 100 / (APP_MAX > 0 ? APP_MAX : 1) ))
-          test "$seg_pct" -lt 2 && seg_pct=2
+          test "$seg_pct" -lt 3 && seg_pct=3
           echo "<div class=\"seg app-${name}\" style=\"width:${seg_pct}%\">$app_cnt</div>" >> "$OUTFILE"
         fi
       done
-      echo "<span class=\"cnt\">$day_total</span></div>" >> "$OUTFILE"
+      echo "</div><span class=\"cnt\">$day_total</span></div>" >> "$OUTFILE"
     done
   fi
 
