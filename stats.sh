@@ -219,14 +219,14 @@ HTMLHEAD2
 
   AVG=$(( TOTAL / (DAYS > 0 ? DAYS : 1) ))
 
-  echo "<h2>${YM} 月概览</h2>" >> "$OUTFILE"
+  # 条形图直接跟在概况后面
   echo "<div class=\"summary\">" >> "$OUTFILE"
   echo "<div class=\"summary-item\"><div class=\"val\">$TOTAL</div><div class=\"lbl\">月总访客</div></div>" >> "$OUTFILE"
   echo "<div class=\"summary-item\"><div class=\"val\">$AVG</div><div class=\"lbl\">日均访客</div></div>" >> "$OUTFILE"
   echo "<div class=\"summary-item\"><div class=\"val\">$DAYS</div><div class=\"lbl\">统计天数</div></div>" >> "$OUTFILE"
   echo "</div>" >> "$OUTFILE"
 
-  echo '<h2>每日访客</h2>' >> "$OUTFILE"
+  # 条形图直接跟在概况后面
   while read d h; do
     dt="${d:0:4}-${d:4:2}-${d:6:2}"
     pct=$(( h * 100 / MAX ))
