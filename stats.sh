@@ -303,7 +303,8 @@ HTMLHEAD2
 # 如果当月无数据（例如每月1号凌晨，当月只有今天的数据且被排除），
 # 则回退到最近一个有效月份作为 stats.html
 MONTH_PREFIX=$(echo "$CUR_MONTH" | tr -d '-')
-HAS_DATA=$(grep -c "^${MONTH_PREFIX}" /tmp/stats_daily.tmp 2>/dev/null || echo 0)
+HAS_DATA=$(grep -c "^${MONTH_PREFIX}" /tmp/stats_daily.tmp 2>/dev/null)
+if [ -z "$HAS_DATA" ]; then HAS_DATA=0; fi
 if [ "$HAS_DATA" -eq 0 ] && [ -n "$MONTHS" ]; then
   # 当月无数据，取最近的有效月份
   FALLBACK_MONTH=$(echo "$MONTHS" | sort -r | head -1)
