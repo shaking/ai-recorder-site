@@ -1,8 +1,8 @@
 #!/bin/bash
 OUT="/home/admin/www/Floatingsk Website/stats.html"
 LOG="/var/log/nginx/access.log"
-NOW=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M')
 CUR_MONTH=$(TZ='Asia/Shanghai' date '+%Y-%m')
+TODAY=$(TZ='Asia/Shanghai' date '+%Y%m%d')
 
 # ---- 过滤规则（行为识别，不再依赖IP黑名单）----
 FILTER_PATTERN='(Chrome|Safari|Firefox|Edge)'
@@ -16,7 +16,7 @@ sudo sh -c "
 > /tmp/stats_daily.tmp
 for f in /var/log/nginx/access.log*; do
   zcat -f \"\$f\" 2>/dev/null
-done | awk -v ua=\"$FILTER_PATTERN\" -v exua=\"$EXCLUDE_UA\" -v susp=\"$SUS_PATHS\" '
+done | awk -v ua=\"$FILTER_PATTERN\" -v exua=\"$EXCLUDE_UA\" -v susp=\"$SUS_PATHS\" -v today=\"$TODAY\" '
 BEGIN {
   mon[\"Jan\"]=\"01\"; mon[\"Feb\"]=\"02\"; mon[\"Mar\"]=\"03\"; mon[\"Apr\"]=\"04\"
   mon[\"May\"]=\"05\"; mon[\"Jun\"]=\"06\"; mon[\"Jul\"]=\"07\"; mon[\"Aug\"]=\"08\"
@@ -29,7 +29,7 @@ BEGIN {
     match(\$0, /\[([0-9]{2})\/([A-Z][a-z]{2})\/([0-9]{4})/, a)
     if (a[1] != \"\") {
       day = a[3] mon[a[2]] a[1]
-      seen[day][\$1] = 1      # 按日按IP去重
+      if (day != today) seen[day][\$1] = 1      # 按日按IP去重，排除当天不完整数据
     }
   }
 }
@@ -50,7 +50,7 @@ sudo sh -c "
 > /tmp/stats_app_detail.tmp
 for f in /var/log/nginx/access.log*; do
   zcat -f \"\$f\" 2>/dev/null
-done | awk '
+done | awk -v today=\"$TODAY\" '
 BEGIN {
   mon[\"Jan\"]=\"01\"; mon[\"Feb\"]=\"02\"; mon[\"Mar\"]=\"03\"; mon[\"Apr\"]=\"04\"
   mon[\"May\"]=\"05\"; mon[\"Jun\"]=\"06\"; mon[\"Jul\"]=\"07\"; mon[\"Aug\"]=\"08\"
@@ -60,10 +60,10 @@ index(\$7, \"/a/\") == 1 && \$7 != \"/a/test\" {
   match(\$0, /\[([0-9]{2})\/([A-Z][a-z]{2})\/([0-9]{4})/, a)
   if (a[1] != \"\") {
     day = a[3] mon[a[2]] a[1]
-    cnt[day]++
+    if (day != today) { cnt[day]++ }      # 排除当天不完整数据
     # 提取 app 名: /go/ai-recorder -> ai-recorder
     split(\$7, p, \"/\")
-    app[day][p[3]]++
+    if (day != today) app[day][p[3]]++
   }
 }
 END {
@@ -88,7 +88,7 @@ index(\$7, \"/a/\") == 1 && \$7 != \"/a/test\" {
 }
 ' < /dev/null > /tmp/stats_app_detail.tmp
 for f in /var/log/nginx/access.log*; do
-  zcat -f \"\$f\" 2>/dev/null | awk '
+  zcat -f \"\$f\" 2>/dev/null | awk -v today=\"$TODAY\" '
 BEGIN {
   mon[\"Jan\"]=\"01\"; mon[\"Feb\"]=\"02\"; mon[\"Mar\"]=\"03\"; mon[\"Apr\"]=\"04\"
   mon[\"May\"]=\"05\"; mon[\"Jun\"]=\"06\"; mon[\"Jul\"]=\"07\"; mon[\"Aug\"]=\"08\"
@@ -98,8 +98,7 @@ index(\$7, \"/a/\") == 1 && \$7 != \"/a/test\" {
   match(\$0, /\[([0-9]{2})\/([A-Z][a-z]{2})\/([0-9]{4})/, a)
   if (a[1] != \"\") {
     day = a[3] mon[a[2]] a[1]
-    split(\$7, p, \"/\")
-    print day, p[3]
+    if (day != today) { split(\$7, p, \"/\"); print day, p[3] }   # 排除当天不完整数据
   }
 }
 ' >> /tmp/stats_app_detail.tmp
@@ -140,8 +139,6 @@ h2{font-size:15px;margin:32px 0 12px;color:#111}
 <body>
 <h1>浮空岛 · 访问统计</h1>
 HTMLHEAD
-
-echo "<p class=\"note\">每日独立访客 · 行为识别自动过滤扫描<br>更新时间 $NOW</p>" >> "$OUT"
 
 echo '<div class="picker"><select onchange="var v=this.value;if(v)window.location.href=v">' >> "$OUT"
 for m in $MONTHS; do
@@ -189,8 +186,6 @@ h2{font-size:15px;margin:32px 0 12px;color:#111}
 <body>
 <h1>浮空岛 · 访问统计</h1>
 HTMLHEAD2
-
-  echo "<p class=\"note\">每日独立访客 · 行为识别自动过滤扫描<br>更新时间 $NOW</p>" >> "$OUTFILE"
 
   echo '<div class="picker"><select onchange="var v=this.value;if(v)window.location.href=v">' >> "$OUTFILE"
   for m in $MONTHS; do
@@ -305,8 +300,20 @@ HTMLHEAD2
 }
 
 # ---- 生成当月页面 ----
-generate_month_page "$CUR_MONTH" "$OUT"
-cp "$OUT" "/home/admin/www/Floatingsk Website/stats-${CUR_MONTH}.html"
+# 如果当月无数据（例如每月1号凌晨，当月只有今天的数据且被排除），
+# 则回退到最近一个有效月份作为 stats.html
+MONTH_PREFIX=$(echo "$CUR_MONTH" | tr -d '-')
+HAS_DATA=$(grep -c "^${MONTH_PREFIX}" /tmp/stats_daily.tmp 2>/dev/null || echo 0)
+if [ "$HAS_DATA" -eq 0 ] && [ -n "$MONTHS" ]; then
+  # 当月无数据，取最近的有效月份
+  FALLBACK_MONTH=$(echo "$MONTHS" | sort -r | head -1)
+  FALLBACK_YM="${FALLBACK_MONTH:0:4}-${FALLBACK_MONTH:4:2}"
+  echo "当月($CUR_MONTH)暂无数据，使用 $FALLBACK_YM 代替 stats.html"
+  generate_month_page "$FALLBACK_YM" "$OUT"
+else
+  generate_month_page "$CUR_MONTH" "$OUT"
+  cp "$OUT" "/home/admin/www/Floatingsk Website/stats-${CUR_MONTH}.html"
+fi
 
 # ---- 生成所有历史月份页面 ----
 for m in $MONTHS; do
