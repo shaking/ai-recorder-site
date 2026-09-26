@@ -60,10 +60,10 @@ index(\$7, \"/a/\") == 1 && \$7 != \"/a/test\" {
   match(\$0, /\[([0-9]{2})\/([A-Z][a-z]{2})\/([0-9]{4})/, a)
   if (a[1] != \"\") {
     day = a[3] mon[a[2]] a[1]
-    if (day != today) { cnt[day]++ }      # 排除当天不完整数据
-    # 提取 app 名: /go/ai-recorder -> ai-recorder
+    # 提取 app 名: /a/ai-recorder -> ai-recorder；/a/ 空名请求是扫描/探测，不计
     split(\$7, p, \"/\")
-    if (day != today) app[day][p[3]]++
+    appname = (length(p[3]) > 0) ? p[3] : \"\"
+    if (day != today && appname != \"\") { cnt[day]++; app[day][appname]++ }   # 排除当天不完整数据
   }
 }
 END {
@@ -72,21 +72,7 @@ END {
 ' | sort > /tmp/stats_app.tmp
 
 # 按 app 明细
-awk '
-BEGIN {
-  mon[\"Jan\"]=\"01\"; mon[\"Feb\"]=\"02\"; mon[\"Mar\"]=\"03\"; mon[\"Apr\"]=\"04\"
-  mon[\"May\"]=\"05\"; mon[\"Jun\"]=\"06\"; mon[\"Jul\"]=\"07\"; mon[\"Aug\"]=\"08\"
-  mon[\"Sep\"]=\"09\"; mon[\"Oct\"]=\"10\"; mon[\"Nov\"]=\"11\"; mon[\"Dec\"]=\"12\"
-}
-index(\$7, \"/a/\") == 1 && \$7 != \"/a/test\" {
-  match(\$0, /\[([0-9]{2})\/([A-Z][a-z]{2})\/([0-9]{4})/, a)
-  if (a[1] != \"\") {
-    day = a[3] mon[a[2]] a[1]
-    split(\$7, p, \"/\")
-    print day, p[3]
-  }
-}
-' < /dev/null > /tmp/stats_app_detail.tmp
+> /tmp/stats_app_detail.tmp
 for f in /var/log/nginx/access.log*; do
   zcat -f \"\$f\" 2>/dev/null | awk -v today=\"$TODAY\" '
 BEGIN {
@@ -98,7 +84,9 @@ index(\$7, \"/a/\") == 1 && \$7 != \"/a/test\" {
   match(\$0, /\[([0-9]{2})\/([A-Z][a-z]{2})\/([0-9]{4})/, a)
   if (a[1] != \"\") {
     day = a[3] mon[a[2]] a[1]
-    if (day != today) { split(\$7, p, \"/\"); print day, p[3] }   # 排除当天不完整数据
+    split(\$7, p, \"/\")
+    # 空 app 名（GET /a/ 探测请求）直接丢弃，避免“只有数字没有图形”
+    if (length(p[3]) > 0 && day != today) print day, p[3]                # 排除当天不完整数据
   }
 }
 ' >> /tmp/stats_app_detail.tmp
@@ -117,6 +105,8 @@ cat > "$OUT" << 'HTMLHEAD'
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>浮空岛 · 访问统计</title>
+<link rel="icon" type="image/png" href="assets/favicon-round.png">
+<link rel="apple-touch-icon" href="assets/favicon-round.png">
 <style>
 body{font-family:-apple-system,sans-serif;max-width:800px;margin:60px auto;padding:0 20px;color:#111;background:#fff}
 h1{font-size:32px;margin-bottom:6px}
@@ -164,6 +154,8 @@ generate_month_page() {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>浮空岛 · ${YM} 访问统计</title>
+<link rel="icon" type="image/png" href="assets/favicon-round.png">
+<link rel="apple-touch-icon" href="assets/favicon-round.png">
 <style>
 body{font-family:-apple-system,sans-serif;max-width:800px;margin:60px auto;padding:0 20px;color:#111;background:#fff}
 h1{font-size:32px;margin-bottom:6px}
@@ -212,7 +204,8 @@ HTMLHEAD2
     echo "$d $h" >> /tmp/stats_month.tmp
   done < /tmp/stats_daily.tmp
 
-  AVG=$(( TOTAL / (DAYS > 0 ? DAYS : 1) ))
+  AVG=0
+  if [ "$DAYS" -gt 0 ]; then AVG=$(( TOTAL / DAYS )); fi
 
   echo "<h2>每日访客</h2>" >> "$OUTFILE"
   echo "<div class=\"summary\">" >> "$OUTFILE"
@@ -240,9 +233,11 @@ HTMLHEAD2
   APP_DAYS=$(awk '{print $1}' /tmp/stats_app_agg.tmp | sort -u | wc -l | tr -d ' ')
   # APP_MAX = 单日总点击的最大值，不是单应用最大
   APP_MAX=$(awk '{print $1}' /tmp/stats_app_agg.tmp | sort | uniq -c | sort -rn | head -1 | awk '{print $1}')
+  if [ -z "$APP_MAX" ]; then APP_MAX=1; fi
 
   if [ "$APP_TOTAL" -gt 0 ]; then
-    APP_AVG=$(( APP_TOTAL / (APP_DAYS > 0 ? APP_DAYS : 1) ))
+    APP_AVG=0
+    if [ "$APP_DAYS" -gt 0 ]; then APP_AVG=$(( APP_TOTAL / APP_DAYS )); fi
 
     # CSS 颜色定义
     echo '<style>
@@ -250,6 +245,8 @@ HTMLHEAD2
     .app-eye-gym{background:#22C55E}
     .app-kids-points{background:#FFB800}
     .app-bonsai{background:#593A00}
+    .app-purcam{background:#7C5CFF}
+    .seg.app-unknown{background:#9CA3AF}
     .legend{display:flex;flex-wrap:wrap;gap:16px;margin:12px 0 24px;font-size:13px}
     .legend span{display:inline-flex;align-items:center;gap:6px}
     .legend .dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
@@ -274,18 +271,24 @@ HTMLHEAD2
     echo '<span><span class="dot app-eye-gym"></span>Eye Gym</span>' >> "$OUTFILE"
     echo '<span><span class="dot app-kids-points"></span>Kids Points</span>' >> "$OUTFILE"
     echo '<span><span class="dot app-bonsai"></span>Bonsai</span>' >> "$OUTFILE"
+    echo '<span><span class="dot app-purcam"></span>Purcam</span>' >> "$OUTFILE"
     echo '</div>' >> "$OUTFILE"
 
     # 每日彩色分段条
+    # 当天出现的所有 app 名（含未登记的新 app）都渲染，杜绝“有数字没图形”
+    KNOWN_APPS="ai-recorder eye-gym kids-points bonsai purcam"
+    KNOWN_LIST=$(echo "$KNOWN_APPS" | tr ' ' '\n')
     for d in $(awk '{print $1}' /tmp/stats_app_agg.tmp | sort -u); do
       dt="${d:0:4}-${d:4:2}-${d:6:2}"
       day_total=$(grep -c "^$d " /tmp/stats_app_agg.tmp)
       echo "<div class=\"bar-group\"><span class=\"label\">$dt</span><div class=\"app-track\">" >> "$OUTFILE"
-      for name in ai-recorder eye-gym kids-points bonsai; do
-        app_cnt=$(grep "^$d $name$" /tmp/stats_app_agg.tmp | wc -l)
+      day_apps=$(awk -v d="$d" '$1 == d {print $2}' /tmp/stats_app_agg.tmp | sort -u)
+      extra_apps=$(echo "$day_apps" | grep -vxF "$KNOWN_LIST" 2>/dev/null | tr '\n' ' ')
+      for name in $KNOWN_APPS $extra_apps; do
+        app_cnt=$(grep -c "^$d $name$" /tmp/stats_app_agg.tmp)
         if [ "$app_cnt" -gt 0 ]; then
-          seg_pct=$(( app_cnt * 100 / (APP_MAX > 0 ? APP_MAX : 1) ))
-          test "$seg_pct" -lt 2 && seg_pct=2
+          # 段长按 APP_MAX 归一，跨天可比；浮点避免小值被截断成 0，最小 2% 保证可见
+          seg_pct=$(awk -v c="$app_cnt" -v m="$APP_MAX" 'BEGIN{p=c*100/m; if(p<2) p=2; printf "%.1f", p}')
           echo "<div class=\"seg app-${name}\" style=\"width:${seg_pct}%\">$app_cnt</div>" >> "$OUTFILE"
         fi
       done
