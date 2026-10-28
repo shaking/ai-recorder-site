@@ -1,0 +1,16 @@
+{
+  "name": "XMAGE / TOKYO 2026",
+  "short_name": "XMAGE Tokyo",
+  "start_url": "/japan-xmage/",
+  "display": "standalone",
+  "background_color": "#f1eee8",
+  "theme_color": "#ff5b22",
+  "icons": [
+    {
+      "src": "assets/xmage-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
