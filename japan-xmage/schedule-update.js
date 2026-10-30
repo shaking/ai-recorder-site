@@ -95,7 +95,7 @@
   const day = [...document.querySelectorAll('.day')].find(item => item.textContent.includes('11.07'));
   if (day) {
     day.querySelector('h3').innerHTML = '同行团建<br>富士山山中湖';
-    day.querySelector('.slots').innerHTML = '<div><b>上午</b><strong>前往·山中湖<br>山梨县·山中湖村</strong></div><div><b>中午</b><strong>湖畔午餐·山中湖<br>地点待定</strong></div><div><b>下午</b><strong>游览·山中湖<br>富士山湖畔景观与团建活动</strong></div><div><b>晚上</b><strong>团建晚餐<br>安排中</strong></div>';
+    day.querySelector('.slots').innerHTML = '<div><b>上午</b><strong>06:30–09:30 前往·山中湖<br>山梨县·山中湖村<br>09:30–12:00 山中湖游览<br>湖畔景观与团建活动</strong></div><div><b>中午</b><strong>12:00–13:00 湖畔午餐·山中湖<br>地点待定</strong></div><div><b>下午</b><strong>13:00–16:30 山中湖游览<br>富士山湖畔景观与团建活动<br>16:30–18:30 返回东京</strong></div><div><b>晚上</b><strong>团建晚餐<br>安排中</strong></div>';
   }
 
   const arrivalDay = [...document.querySelectorAll('.day')].find(item => item.textContent.includes('11.02'));
@@ -107,7 +107,7 @@
   const returnDay = [...document.querySelectorAll('.day')].find(item => item.textContent.includes('11.10'));
   if (returnDay) {
     const noon = returnDay.querySelector('.slots > div:nth-child(2) strong');
-    if (noon) noon.innerHTML = '11:00 起飞·全日空 NH965<br>东京羽田 → 深圳宝安<br>15:30 抵达<br><br>14:25 起飞·日本航空 JL085<br>东京羽田 → 上海浦东<br>17:05 抵达';
+    if (noon) noon.innerHTML = '19:00 起飞·深圳航空 ZH652<br>东京成田 T1 → 深圳宝安<br>23:05 抵达<br><br>13:30 起飞·东方航空 MU8632<br>东京羽田 → 上海虹桥<br>15:45 抵达<br>（上海航空 FM816 执飞）';
   }
 
   const folder = document.querySelector('.photo-folder[data-date="2026-11-07"]');
@@ -171,7 +171,7 @@
     const label = day8.querySelector(':scope > span');
     if (label) { label.childNodes[0].textContent = '11.08 · SUN '; label.querySelector('i').textContent = '返程'; }
     day8.querySelector('h3').innerHTML = '回国<br>航班日';
-    day8.querySelector('.slots').innerHTML = '<div><b>上午</b><strong>收拾 / 退房</strong></div><div><b>中午</b><strong>11:00 起飞·全日空 NH965<br>东京羽田 → 深圳宝安<br>15:30 抵达<br><br>14:25 起飞·日本航空 JL085<br>东京羽田 → 上海浦东<br>17:05 抵达</strong></div><div><b>下午</b><strong>抵达深圳 / 上海</strong></div><div><b>晚上</b><strong>行程结束</strong></div>';
+    day8.querySelector('.slots').innerHTML = '<div><b>上午</b><strong>收拾 / 退房</strong></div><div><b>中午</b><strong>19:00 起飞·深圳航空 ZH652<br>东京成田 T1 → 深圳宝安<br>23:05 抵达<br><br>13:30 起飞·东方航空 MU8632<br>东京羽田 → 上海虹桥<br>15:45 抵达<br>（上海航空 FM816 执飞）</strong></div><div><b>下午</b><strong>前往成田机场 / 羽田机场</strong></div><div><b>晚上</b><strong>抵达深圳 / 上海<br>行程结束</strong></div>';
   }
   ['11.09', '11.10'].map(findDay).filter(Boolean).forEach(day => { day.hidden = true; });
 
@@ -251,8 +251,8 @@
     card.addEventListener('click', event => { if (!event.target.closest('.map-link')) choose(); });
     card.addEventListener('keydown', event => { if ((event.key === 'Enter' || event.key === ' ') && !event.target.closest('.map-link')) { event.preventDefault(); choose(); } });
   });
-  list.insertAdjacentHTML('beforeend', '<div class="place-date"><b>11.08 · 周日</b><span>返程 · 酒店与机场</span></div><div data-place="hotel" class="place-card" role="button" tabindex="0"><b>12</b><span><strong>新高轮王子大酒店</strong><small>高轮 3-13-1 · 港区</small></span><a class="map-link" href="https://www.google.com/maps/search/Grand+Prince+Hotel+Shin+Takanawa+Tokyo" target="_blank" rel="noopener" aria-label="在 Google Maps 打开新高轮王子大酒店">↗</a></div><div data-place="haneda" class="place-card" role="button" tabindex="0"><b>13</b><span><strong>东京羽田机场</strong><small>羽田 · 大田区</small></span><a class="map-link" href="https://www.google.com/maps/search/Haneda+Airport+Tokyo" target="_blank" rel="noopener" aria-label="在 Google Maps 打开东京羽田机场">↗</a></div>');
-  list.querySelectorAll('[data-place="haneda"],[data-place="hotel"]').forEach(card => {
+  list.insertAdjacentHTML('beforeend', '<div class="place-date"><b>11.08 · 周日</b><span>返程 · 酒店与机场</span></div><div data-place="hotel" class="place-card" role="button" tabindex="0"><b>12</b><span><strong>新高轮王子大酒店</strong><small>高轮 3-13-1 · 港区</small></span><a class="map-link" href="https://www.google.com/maps/search/Grand+Prince+Hotel+Shin+Takanawa+Tokyo" target="_blank" rel="noopener" aria-label="在 Google Maps 打开新高轮王子大酒店">↗</a></div><div data-place="narita" class="place-card" role="button" tabindex="0"><b>13</b><span><strong>东京成田机场</strong><small>成田 · 千叶县</small></span><a class="map-link" href="https://www.google.com/maps/search/Narita+International+Airport+Terminal+1+Tokyo" target="_blank" rel="noopener" aria-label="在 Google Maps 打开东京成田机场">↗</a></div>');
+  list.querySelectorAll('[data-place="narita"],[data-place="hotel"]').forEach(card => {
     if (card.dataset.bound === 'true') return;
     card.dataset.bound = 'true';
     const choose = () => window.selectPlace?.(card.dataset.place);
